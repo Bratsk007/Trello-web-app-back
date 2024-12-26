@@ -1,6 +1,7 @@
 package webApp.company.trello.board.controller.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import webApp.company.trello.board.controller.BoardController;
 import webApp.company.trello.board.dto.BoardListResponse;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class BoardControllerImpl implements BoardController {
     private final BoardService boardService;
 

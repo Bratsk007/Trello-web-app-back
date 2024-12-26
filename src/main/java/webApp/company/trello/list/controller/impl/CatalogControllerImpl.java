@@ -1,6 +1,7 @@
 package webApp.company.trello.list.controller.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import webApp.company.trello.list.controller.CatalogController;
 import webApp.company.trello.list.dto.CatalogRequest;
@@ -8,6 +9,7 @@ import webApp.company.trello.list.service.CatalogService;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class CatalogControllerImpl implements CatalogController {
     private final CatalogService catalogService;
 

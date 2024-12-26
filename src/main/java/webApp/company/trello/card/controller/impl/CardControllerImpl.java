@@ -1,6 +1,7 @@
 package webApp.company.trello.card.controller.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import webApp.company.trello.card.controller.CardController;
 import webApp.company.trello.card.dto.CardMoveRequest;
@@ -10,6 +11,7 @@ import webApp.company.trello.card.service.CardService;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class CardControllerImpl implements CardController {
     private final CardService cardService;
 
