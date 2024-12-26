@@ -1,0 +1,16 @@
+version: "3.9"
+volumes:
+  trello:
+
+services:
+  trello:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: db_for_trello
+      POSTGRES_USER: denis
+      POSTGRES_PASSWORD: 123
+    volumes:
+      - trello:/var/lib/postgresql/data
+    ports:
+      - "5406:5432"
