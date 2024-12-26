@@ -25,6 +25,6 @@ public class Catalog {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @OneToMany(mappedBy = "catalog")
+    @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL)
     private List<Card> cardList;
 }

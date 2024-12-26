@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import webApp.company.trello.board.dto.BoardListResponse;
 import webApp.company.trello.board.dto.BoardRequest;
+import webApp.company.trello.board.dto.BoardResponse;
 
 import java.util.List;
 
@@ -20,4 +21,10 @@ public interface BoardController {
 
     @PutMapping("/{boardId}")
     void updateBoard(@PathVariable Integer boardId, @RequestBody BoardRequest boardRequest);
+
+    @PostMapping("/lists/{boardId}")
+    BoardResponse getBoardById(@PathVariable Integer boardId);
+
+    @DeleteMapping("/{boardId}")
+    void deleteBoardById(@PathVariable Integer boardId);
 }

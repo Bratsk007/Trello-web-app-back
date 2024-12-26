@@ -2,10 +2,7 @@ package webApp.company.trello.list.controller;
 
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import webApp.company.trello.list.dto.CatalogRequest;
 
 @Tag(name = "Сущность лист", description = "API для получения/удаления/обновления списков")
@@ -17,4 +14,7 @@ public interface CatalogController {
 
     @PutMapping("/{catalogId}")
     void updateList(@PathVariable Integer catalogId, CatalogRequest catalogRequest);
+
+    @DeleteMapping("/{listId}")
+    void deleteList(@PathVariable Integer listId);
 }

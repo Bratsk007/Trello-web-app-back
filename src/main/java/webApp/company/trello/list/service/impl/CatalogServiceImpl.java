@@ -51,5 +51,16 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
+    @Override
+    public void deleteListById(Integer listId) {
+        Optional<Catalog> optionalCatalog = catalogDao.findById(listId);
+
+        if (optionalCatalog.isPresent()) {
+            Catalog catalog = optionalCatalog.get();
+
+            catalogDao.delete(catalog);
+        }
+    }
+
 
 }

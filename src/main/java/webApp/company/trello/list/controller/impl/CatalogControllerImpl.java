@@ -21,5 +21,10 @@ public class CatalogControllerImpl implements CatalogController {
         catalogService.updateList(catalogId, catalogRequest);
     }
 
+    @Override
+    public void deleteList(Integer listId) {
+        catalogService.deleteListById(listId);
+    }
+
 
 }

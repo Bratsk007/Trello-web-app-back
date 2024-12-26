@@ -7,4 +7,7 @@ public interface CatalogService {
     void saveList(Integer boardId, CatalogRequest catalogRequest);
 
     void updateList(Integer catalogId, CatalogRequest catalogRequest);
+
+
+    void deleteListById(Integer listId);
 }

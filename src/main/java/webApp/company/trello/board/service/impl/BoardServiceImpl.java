@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import webApp.company.trello.board.dao.BoardDao;
 import webApp.company.trello.board.dto.BoardListResponse;
 import webApp.company.trello.board.dto.BoardRequest;
+import webApp.company.trello.board.dto.BoardResponse;
 import webApp.company.trello.board.model.Board;
 import webApp.company.trello.board.service.BoardService;
+import webApp.company.trello.list.model.Catalog;
 import webApp.company.trello.user.dao.UserDao;
 import webApp.company.trello.user.model.User;
 
@@ -69,6 +71,34 @@ public class BoardServiceImpl implements BoardService {
             board.setDescription(boardRequest.getDescription());
 
             boardDao.save(board);
+        }
+    }
+
+    @Override
+    public BoardResponse getBoardById(Integer boardId) {
+
+        Optional<Board> optionalBoard = boardDao.findById(boardId);
+
+        if (optionalBoard.isPresent()) {
+            Board board = optionalBoard.get();
+
+            List<Catalog> catalogList = board.getCatalogList();
+
+            return BoardResponse.builder()
+                    .catalogList(catalogList)
+                    .build();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void deleteBoardById(Integer boardId) {
+        Optional<Board> optionalBoard = boardDao.findById(boardId);
+
+        if (optionalBoard.isPresent()) {
+            Board board = optionalBoard.get();
+            boardDao.delete(board);
         }
     }
 
