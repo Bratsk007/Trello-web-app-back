@@ -22,7 +22,7 @@ public interface BoardController {
     @PutMapping("/{boardId}")
     void updateBoard(@PathVariable Integer boardId, @RequestBody BoardRequest boardRequest);
 
-    @PostMapping("/lists/{boardId}")
+    @GetMapping("/lists/{boardId}")
     BoardResponse getBoardById(@PathVariable Integer boardId);
 
     @DeleteMapping("/{boardId}")
