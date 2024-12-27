@@ -4,11 +4,10 @@ package webApp.company.trello.board.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import webApp.company.trello.board.dao.BoardDao;
-import webApp.company.trello.board.dto.BoardListResponse;
-import webApp.company.trello.board.dto.BoardRequest;
-import webApp.company.trello.board.dto.BoardResponse;
+import webApp.company.trello.board.dto.*;
 import webApp.company.trello.board.model.Board;
 import webApp.company.trello.board.service.BoardService;
+import webApp.company.trello.card.model.Card;
 import webApp.company.trello.list.model.Catalog;
 import webApp.company.trello.user.dao.UserDao;
 import webApp.company.trello.user.model.User;
@@ -84,8 +83,27 @@ public class BoardServiceImpl implements BoardService {
 
             List<Catalog> catalogList = board.getCatalogList();
 
+            List<CatalogDto> catalogDtoList = new ArrayList<>();
+
+            for (Catalog catalog : catalogList) {
+                List<CardDto> cardDtoList = new ArrayList<>();
+
+                for (Card card : catalog.getCardList()) {
+                    cardDtoList.add(CardDto.builder()
+                            .id(card.getId())
+                            .description(card.getDescription())
+                            .title(card.getTitle())
+                            .build());
+                }
+
+                catalogDtoList.add(CatalogDto.builder()
+                        .id(catalog.getId())
+                        .cardDtoList(cardDtoList)
+                        .build());
+            }
+
             return BoardResponse.builder()
-                    .catalogList(catalogList)
+                    .catalogList(catalogDtoList)
                     .build();
         }
 
