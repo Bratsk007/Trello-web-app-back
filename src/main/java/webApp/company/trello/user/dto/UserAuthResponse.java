@@ -10,8 +10,8 @@ import lombok.Data;
 @Builder
 @Schema(description = "Ответ на запрос регистрации/аутентификации")
 public class UserAuthResponse {
-    @Schema(description = "Результат выполнения запроса")
-    private String message;
+
     @Schema(description = "id, которое возвращается при успешном выполнении операции")
     private Integer userId;
+
 }

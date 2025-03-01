@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trello</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card-header {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #172b4d;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 16px;
+            color: #5e6c84;
+            line-height: 1.5;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #5e6c84;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #172b4d;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<!--    &lt;!&ndash; Ссылка "Назад" &ndash;&gt;-->
+<!--    <a th:href="@{/board/{boardId}(boardId=${card.catalog.board.id})}" class="back-link">-->
+<!--        <i class="fas fa-arrow-left"></i> Назад к доске-->
+<!--    </a>-->
+
+    <!-- Заголовок и описание карточки -->
+    <div class="card-header">
+        <div class="card-title" th:text=" 'Название карточки: ' + ${card.title}">Название карточки</div>
+        <div class="card-description" th:text=" 'Описание карточки: ' + ${card.description}">Описание карточки</div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,9 @@
 package webApp.company.trello.list.service;
 
 import webApp.company.trello.list.dto.CatalogRequest;
+import webApp.company.trello.list.model.Catalog;
+
+import java.util.Optional;
 
 public interface CatalogService {
 
@@ -10,4 +13,8 @@ public interface CatalogService {
 
 
     void deleteListById(Integer listId);
+
+    Optional<Catalog> findById(Integer catalogId);
+
+    void saveCatalog(Catalog catalog);
 }

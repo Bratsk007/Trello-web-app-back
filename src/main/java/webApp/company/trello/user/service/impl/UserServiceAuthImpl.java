@@ -16,7 +16,6 @@ import java.util.Optional;
 public class UserServiceAuthImpl implements UserServiceAuth {
     private final UserDao userDao;
 
-
     @Override
     public UserAuthResponse registerUser(UserRegistrationRequest registrationRequest) {
 
@@ -24,7 +23,6 @@ public class UserServiceAuthImpl implements UserServiceAuth {
 
         if (optionalUser.isPresent()) {
             return UserAuthResponse.builder()
-                    .message("Пользователь с таким логином уже существует")
                     .userId(null)
                     .build();
         } else {
@@ -35,7 +33,6 @@ public class UserServiceAuthImpl implements UserServiceAuth {
                     .build();
 
             return UserAuthResponse.builder()
-                    .message("Пользователь успешно зарегистрирован")
                     .userId(userDao.save(user).getId())
                     .build();
 
@@ -45,6 +42,7 @@ public class UserServiceAuthImpl implements UserServiceAuth {
 
     @Override
     public UserAuthResponse authenticated(UserAuthenticatedRequest userAuthenticatedRequest) {
+
         Optional<User> optionalUser = userDao.findByEmail(userAuthenticatedRequest.getEmail());
 
         if (optionalUser.isPresent()) {
@@ -52,21 +50,19 @@ public class UserServiceAuthImpl implements UserServiceAuth {
 
             if (user.getPassword().equals(userAuthenticatedRequest.getPassword())) {
                 return UserAuthResponse.builder()
-                        .message("Вход выполнен успешно")
                         .userId(user.getId())
                         .build();
             } else {
                 return UserAuthResponse.builder()
-                        .message("Неверный логин или пароль")
                         .userId(null)
                         .build();
             }
         } else {
             return UserAuthResponse.builder()
-                    .message("Неверный логин или пароль")
                     .userId(null)
                     .build();
         }
+
     }
 
 

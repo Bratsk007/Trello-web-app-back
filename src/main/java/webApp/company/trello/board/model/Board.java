@@ -5,6 +5,7 @@ import lombok.*;
 import webApp.company.trello.list.model.Catalog;
 import webApp.company.trello.user.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,7 @@ public class Board {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    private List<Catalog> catalogList;
+    private List<Catalog> catalogList = new ArrayList<>();
 }

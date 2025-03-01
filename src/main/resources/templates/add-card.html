@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Добавить карточку</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #172b4d;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            color: #172b4d;
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #5e6c84;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #172b4d;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Ссылка "Назад" -->
+    <a th:href="@{/api/v1/board/{boardId}(boardId=${boardId})}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Назад к доске
+    </a>
+
+    <h1>Добавить карточку</h1>
+    <form th:action="@{/api/v1/catalog/{catalogId}/add-card(catalogId=${catalogId})}" method="post">
+        <div class="form-group">
+            <label for="cardTitle">Название карточки:</label>
+            <input type="text" id="cardTitle" name="cardTitle" required>
+        </div>
+        <div class="form-group">
+            <label for="cardDescription">Описание карточки:</label>
+            <textarea id="cardDescription" name="cardDescription"></textarea>
+        </div>
+        <button type="submit" class="submit-button">Добавить</button>
+    </form>
+</div>
+</body>
+</html>

@@ -74,40 +74,15 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponse getBoardById(Integer boardId) {
+    public Board getBoardById(Integer boardId) {
 
         Optional<Board> optionalBoard = boardDao.findById(boardId);
 
-        if (optionalBoard.isPresent()) {
-            Board board = optionalBoard.get();
-
-            List<Catalog> catalogList = board.getCatalogList();
-
-            List<CatalogDto> catalogDtoList = new ArrayList<>();
-
-            for (Catalog catalog : catalogList) {
-                List<CardDto> cardDtoList = new ArrayList<>();
-
-                for (Card card : catalog.getCardList()) {
-                    cardDtoList.add(CardDto.builder()
-                            .id(card.getId())
-                            .description(card.getDescription())
-                            .title(card.getTitle())
-                            .build());
-                }
-
-                catalogDtoList.add(CatalogDto.builder()
-                        .id(catalog.getId())
-                        .cardDtoList(cardDtoList)
-                        .build());
-            }
-
-            return BoardResponse.builder()
-                    .catalogList(catalogDtoList)
-                    .build();
+        if (optionalBoard.isEmpty()) {
+            throw new RuntimeException();
         }
 
-        return null;
+        return optionalBoard.get();
     }
 
     @Override

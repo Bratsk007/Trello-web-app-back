@@ -20,19 +20,16 @@ public class CardServiceImpl implements CardService {
     private final CatalogDao catalogDao;
 
     @Override
-    public CardResponse getCardById(Integer cardId) {
+    public Card getCardById(Integer cardId) {
+
         Optional<Card> cardOptional = cardDao.findById(cardId);
 
-        if (cardOptional.isPresent()) {
-            Card card = cardOptional.get();
-
-            return CardResponse.builder()
-                    .title(card.getTitle())
-                    .description(card.getDescription())
-                    .build();
+        if (cardOptional.isEmpty()) {
+            throw new RuntimeException("Card с id " + cardId + " не найден");
         }
 
-        return null;
+
+        return cardOptional.get();
     }
 
     @Override
@@ -99,5 +96,10 @@ public class CardServiceImpl implements CardService {
 
             cardDao.delete(card);
         }
+    }
+
+    @Override
+    public void saveCard(Card card) {
+        cardDao.save(card);
     }
 }

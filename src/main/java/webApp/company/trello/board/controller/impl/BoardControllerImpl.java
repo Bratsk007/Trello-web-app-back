@@ -1,47 +1,101 @@
 package webApp.company.trello.board.controller.impl;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
+import org.hibernate.Hibernate;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import webApp.company.trello.board.controller.BoardController;
-import webApp.company.trello.board.dto.BoardListResponse;
-import webApp.company.trello.board.dto.BoardRequest;
-import webApp.company.trello.board.dto.BoardResponse;
+import webApp.company.trello.board.model.Board;
 import webApp.company.trello.board.service.BoardService;
+import webApp.company.trello.user.dao.UserDao;
+import webApp.company.trello.user.model.User;
 
 import java.util.List;
+import java.util.Objects;
 
 
-@RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@Controller
 public class BoardControllerImpl implements BoardController {
     private final BoardService boardService;
+    private final UserDao userDao;
+
+
+//    @Override
+//    public List<BoardListResponse> getBoardsByUserId(Integer userId) {
+//        return boardService.getBoardsByUserId(userId);
+//    }
+//
+//    @Override
+//    public void saveBoardByUserId(Integer userId, BoardRequest boardRequest) {
+//        boardService.saveBoard(userId, boardRequest);
+//    }
+//
+//    @Override
+//    public void updateBoard(Integer boardId, BoardRequest boardRequest) {
+//        boardService.updateBoard(boardId, boardRequest);
+//    }
 
     @Override
-    public List<BoardListResponse> getBoardsByUserId(Integer userId) {
-        return boardService.getBoardsByUserId(userId);
+    public String getBoardById(Model model, Integer boardId) {
+
+        Board board = boardService.getBoardById(boardId);
+        Hibernate.initialize(board.getCatalogList());
+
+        model.addAttribute("board", board);
+        return "board-page";
     }
 
     @Override
-    public void saveBoardByUserId(Integer userId, BoardRequest boardRequest) {
-        boardService.saveBoard(userId, boardRequest);
+    public String createBoard(String title, String description, HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (Objects.isNull(user)) {
+            return "redirect:/";
+        }
+
+
+        Board newBoard = Board.builder()
+                .title(title)
+                .description(description)
+                .build();
+
+        user.getBoards().add(newBoard);
+        newBoard.setUser(user);
+
+        User save = userDao.save(user);
+
+        session.setAttribute("user", save);
+
+        return "redirect:/home-page";
     }
 
     @Override
-    public void updateBoard(Integer boardId, BoardRequest boardRequest) {
-        boardService.updateBoard(boardId, boardRequest);
+    public String deleteBoard(HttpSession session, Integer boardId) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (Objects.isNull(user)) {
+            return "redirect:/";
+        }
+
+        Board board = boardService.getBoardById(boardId);
+
+
+        user.getBoards().remove(board);
+        User save = userDao.save(user);
+
+        session.setAttribute("user", save);
+
+        return "redirect:/home-page";
     }
 
-    @Override
-    public BoardResponse getBoardById(Integer boardId) {
-        return boardService.getBoardById(boardId);
-    }
-
-    @Override
-    public void deleteBoardById(Integer boardId) {
-        boardService.deleteBoardById(boardId);
-    }
+//    @Override
+//    public void deleteBoardById(Integer boardId) {
+//        boardService.deleteBoardById(boardId);
+//    }
 
 
 }

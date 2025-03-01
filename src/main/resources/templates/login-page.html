@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в систему</title>
+    <style>
+        /* Общие стили для всего приложения */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #e3f2fd, #ffffff); /* Градиент от светло-голубого к белому */
+        }
+
+        /* Контейнер для формы */
+        .login-container {
+            background-color: #e3f2fd; /* Светло-голубой фон */
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Заголовок */
+        h2 {
+            color: #333333;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        /* Поля ввода */
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #333333;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #42a5f5; /* Голубой акцент */
+            box-shadow: 0 0 5px rgba(66, 165, 245, 0.3);
+        }
+
+        /* Кнопка */
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #42a5f5; /* Голубой цвет */
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1e88e5; /* Темнее голубой при наведении */
+        }
+
+        /* Сообщение об ошибке */
+        .error-message {
+            color: #ff4444;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Ссылки (если будут) */
+        a {
+            color: #42a5f5; /* Голубой цвет для ссылок */
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Вход в систему</h2>
+    <form th:action="@{/api/v1/auth/login}" method="post">
+        <div>
+            <input type="text" id="username" name="email" placeholder="Почта" required>
+        </div>
+        <div>
+            <input type="password" id="password" name="password" placeholder="Пароль" required>
+        </div>
+        <div>
+            <button type="submit">Войти</button>
+        </div>
+    </form>
+    <div th:if="${param.error}" class="error-message">
+        Неверный логин или пароль
+    </div>
+    <div style="margin-top: 1rem;">
+        <a th:href="@{/register}">Зарегистрироваться</a>
+    </div>
+</div>
+
+</body>
+</html>

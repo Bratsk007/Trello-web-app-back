@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <style>
+        /* Общие стили для всего приложения */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #e3f2fd, #fce4ec, #fff3e0);
+            background-size: 200% 200%;
+            animation: gradientAnimation 10s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Контейнер для формы */
+        .register-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Заголовок */
+        h2 {
+            color: #333333;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        /* Поля ввода */
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: #333333;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            border-color: #42a5f5;
+            box-shadow: 0 0 5px rgba(66, 165, 245, 0.3);
+        }
+
+        /* Кнопка */
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #42a5f5;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1e88e5;
+        }
+
+        /* Сообщение об ошибке */
+        .error-message {
+            color: #ff4444;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Ссылки */
+        a {
+            color: #42a5f5;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h2>Регистрация</h2>
+    <form th:action="@{/api/v1/auth/register}" method="post">
+        <div>
+            <input type="text" id="username" name="username" placeholder="Имя пользователя" required>
+        </div>
+        <div>
+            <input type="email" id="email" name="email" placeholder="Электронная почта" required>
+        </div>
+        <div>
+            <input type="password" id="password" name="password" placeholder="Пароль" required>
+        </div>
+        <div>
+            <button type="submit">Зарегистрироваться</button>
+        </div>
+    </form>
+    <!-- Сообщение об ошибке (если есть) -->
+    <div th:if="${param.error}" class="error-message">
+        Ошибка при регистрации, данный email уже зарегистрирован.
+    </div>
+    <!-- Ссылка на вход -->
+    <div style="margin-top: 1rem;">
+        Уже есть аккаунт? <a th:href="@{/}">Войти</a>
+    </div>
+</div>
+</body>
+</html>

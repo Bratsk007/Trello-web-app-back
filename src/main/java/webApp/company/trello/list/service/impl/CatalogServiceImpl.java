@@ -62,5 +62,15 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
+    @Override
+    public Optional<Catalog> findById(Integer catalogId) {
+        return catalogDao.findById(catalogId);
+    }
+
+    @Override
+    public void saveCatalog(Catalog catalog) {
+        catalogDao.save(catalog);
+    }
+
 
 }

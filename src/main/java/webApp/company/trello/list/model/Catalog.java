@@ -5,6 +5,7 @@ import lombok.*;
 import webApp.company.trello.board.model.Board;
 import webApp.company.trello.card.model.Card;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,5 +27,5 @@ public class Catalog {
     private Board board;
 
     @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL)
-    private List<Card> cardList;
+    private List<Card> cardList = new ArrayList<>();
 }

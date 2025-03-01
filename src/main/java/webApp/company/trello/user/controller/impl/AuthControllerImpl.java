@@ -1,27 +1,77 @@
 package webApp.company.trello.user.controller.impl;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RestController;
+import org.hibernate.Hibernate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import webApp.company.trello.user.controller.AuthController;
 import webApp.company.trello.user.dto.UserAuthResponse;
 import webApp.company.trello.user.dto.UserAuthenticatedRequest;
 import webApp.company.trello.user.dto.UserRegistrationRequest;
+import webApp.company.trello.user.model.User;
+import webApp.company.trello.user.service.UserService;
 import webApp.company.trello.user.service.UserServiceAuth;
 
-@RestController
+import java.util.Objects;
+import java.util.Optional;
+
+@Controller
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class AuthControllerImpl implements AuthController {
-    private final UserServiceAuth userService;
+    private final UserServiceAuth userServiceAuth;
+    private final UserService userService;
 
     @Override
-    public UserAuthResponse registerUser(UserRegistrationRequest registrationRequest) {
-        return userService.registerUser(registrationRequest);
+    public String registerUser(String username, String email, String password) {
+
+
+        UserRegistrationRequest registrationRequest = UserRegistrationRequest.builder()
+                .username(username)
+                .email(email)
+                .password(password)
+                .build();
+
+        UserAuthResponse userAuthResponse = userServiceAuth.registerUser(registrationRequest);
+
+        if (Objects.isNull(userAuthResponse.getUserId())) {
+            return "redirect:/register?error";
+        }
+
+        return "redirect:/";
     }
 
     @Override
-    public UserAuthResponse authenticated(UserAuthenticatedRequest userAuthenticatedRequest) {
-        return userService.authenticated(userAuthenticatedRequest);
+    public String authenticated(String email, String password, HttpSession session) {
+
+        UserAuthenticatedRequest authenticatedRequest = UserAuthenticatedRequest.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        UserAuthResponse userFromAuthService = userServiceAuth.authenticated(authenticatedRequest);
+
+        // возвращаем пользователя на страничку ввода логина и пароля, сообщая ему об ошибке
+        if (Objects.isNull(userFromAuthService.getUserId())) {
+            return "redirect:/?error";
+        }
+
+        Optional<User> optionalUser = userService.getUserById(userFromAuthService.getUserId());
+
+        // здесь можно быть уверенным, что пользователь такой существует
+        User user = optionalUser.get();
+        Hibernate.initialize(user.getBoards());
+
+        session.setAttribute("user", user);
+        return "redirect:/home-page";
+
+    }
+
+    @Override
+    public String logout(HttpSession session) {
+
+        session.removeAttribute("user");
+
+        return "redirect:/";
     }
 }
