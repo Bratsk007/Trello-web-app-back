@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trello</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Стили для кнопок */
+        .back-button, .logout-button {
+            position: fixed; /* Фиксированное позиционирование */
+            top: 20px;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            z-index: 1000; /* Убедимся, что кнопки всегда сверху */
+        }
+
+        .back-button {
+            left: 20px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .logout-button {
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .logout-button:hover {
+            background-color: #e60000;
+        }
+
+        /* Адаптивные стили для кнопок */
+        @media (max-width: 768px) {
+            .back-button, .logout-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .back-button, .logout-button {
+                padding: 6px 12px;
+                font-size: 10px;
+            }
+        }
+
+        /* Стили для заголовка доски */
+        .board-header {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 80px; /* Отступ сверху, чтобы не перекрывать кнопки */
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .board-header {
+                margin-top: 60px; /* Уменьшаем отступ для маленьких экранов */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .board-header {
+                margin-top: 50px; /* Еще меньше отступ для очень маленьких экранов */
+            }
+        }
+
+        .board-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #172b4d;
+            margin-bottom: 10px;
+        }
+
+        .board-description {
+            font-size: 16px;
+            color: #5e6c84;
+        }
+
+        .catalogs-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .catalog {
+            background-color: #ebecf0;
+            border-radius: 8px;
+            width: 300px;
+            min-width: 300px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .catalog-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #172b4d;
+            margin-bottom: 12px;
+        }
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 4px;
+            padding: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #172b4d;
+        }
+
+        .add-card {
+            margin-top: 12px;
+            color: #5e6c84;
+            cursor: pointer;
+        }
+
+        .add-card:hover {
+            color: #172b4d;
+        }
+
+        .add-card-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            text-decoration: none; /* Убираем подчёркивание */
+        }
+
+        .add-card-button:hover {
+            background-color: #45a049;
+        }
+
+        .add-catalog:hover {
+            color: #172b4d;
+        }
+
+        .add-catalog {
+            color: #5e6c84;
+            cursor: pointer;
+        }
+
+        .no-catalogs-message {
+            font-size: 16px;
+            color: #5e6c84;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Стили для скролла */
+        .catalogs-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .catalogs-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .catalogs-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .catalogs-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .cards-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .cards-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .cards-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .cards-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Кнопка "Назад в личный кабинет" -->
+    <a th:href="@{/home-page}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Назад в личный кабинет
+    </a>
+
+    <!-- Форма для выхода -->
+    <form th:action="@{/api/v1/auth/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-button">
+            <i class="fas fa-sign-out-alt"></i> Выйти
+        </button>
+    </form>
+
+    <!-- Заголовок и описание доски -->
+    <div class="board-header">
+        <div class="board-title">
+            Название доски: <span th:text="${board.title}">Название доски</span>
+        </div>
+        <div class="board-description">
+            Описание доски: <span th:text="${board.description}">Описание доски</span>
+        </div>
+    </div>
+
+    <!-- Проверка, есть ли каталоги -->
+    <div th:if="${board.catalogList.isEmpty}">
+        <p class="no-catalogs-message">На этой доске пока нет списков. Создайте новый список!</p>
+        <div class="catalog">
+            <div class="add-catalog">
+                <a th:href="@{/api/v1/catalog/{boardId}/add-catalog-page(boardId=${board.id})}" class = "add-card-button">
+                    <i class="fas fa-plus"></i> Добавить список
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Отображение каталогов, если они есть -->
+    <div th:unless="${board.catalogList.isEmpty}" class="catalogs-container">
+        <div th:each="catalog : ${board.catalogList}" class="catalog">
+            <div class="catalog-title" th:text="${catalog.title}">Название каталога</div>
+            <div class="cards-list">
+                <div th:each="card : ${catalog.cardList}" class="card"
+                     th:onclick="|window.location.href='/api/v1/card/' + ${card.id}|">
+                    <div class="card-title" th:text="${card.title}">Название карточки</div>
+                </div>
+                <div class="add-card">
+                    <a th:href="@{/api/v1/catalog/{catalogId}/add-card-page(catalogId=${catalog.id})}"
+                       class="add-card-button">
+                        <i class="fas fa-plus"></i> Добавить карточку
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="catalog">
+            <div class="add-catalog">
+                <a th:href="@{/api/v1/catalog/{boardId}/add-catalog-page(boardId=${board.id})}" class = "add-card-button">
+                    <i class="fas fa-plus"></i> Добавить список
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

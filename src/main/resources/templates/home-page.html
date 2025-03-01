@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Личный кабинет</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #172b4d;
+            margin-bottom: 20px;
+        }
+
+        .welcome-message {
+            font-size: 18px;
+            color: #5e6c84;
+            margin-bottom: 30px;
+        }
+
+        .boards-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+
+        .board-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            min-width: 300px;
+            padding: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .board-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .board-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #172b4d;
+            margin-bottom: 8px;
+        }
+
+        .board-description {
+            font-size: 14px;
+            color: #5e6c84;
+        }
+
+        .no-boards {
+            font-size: 16px;
+            color: #5e6c84;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .logout-button:hover {
+            background-color: #e60000;
+        }
+
+        .create-board-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .create-board-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-board-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-left: 10px;
+        }
+
+        .delete-board-button:hover {
+            background-color: #e60000;
+        }
+
+        .action-buttons {
+            margin-bottom: 20px;
+        }
+
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .modal-board-list {
+            margin-top: 20px;
+        }
+
+        .modal-board-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .modal-board-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .modal-board-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #172b4d;
+        }
+
+        .modal-board-description {
+            font-size: 14px;
+            color: #5e6c84;
+        }
+
+        .confirm-delete-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        .confirm-delete-button:hover {
+            background-color: #e60000;
+        }
+
+        /* Стили для скролла */
+        .boards-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .boards-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .boards-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .boards-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Форма для выхода -->
+    <form th:action="@{/api/v1/auth/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-button">
+            <i class="fas fa-sign-out-alt"></i> Выйти
+        </button>
+    </form>
+
+    <h1>Личный кабинет</h1>
+    <div class="welcome-message">
+        Добро пожаловать, <span th:text="${user.username}">Пользователь</span>!
+    </div>
+
+    <h2>Ваши доски:</h2>
+
+    <!-- Кнопки "Создать доску" и "Удалить доску" -->
+    <div class="action-buttons">
+        <button onclick="window.location.href='/api/v1/board/page-creating-board'" class="create-board-button">
+            <i class="fas fa-plus"></i> Создать доску
+        </button>
+        <button onclick="openDeleteModal()" class="delete-board-button">
+            <i class="fas fa-trash"></i> Удалить доску
+        </button>
+    </div>
+
+    <div th:if="${user.boards.isEmpty}">
+        <p class="no-boards">У вас пока нет досок. Создайте новую доску!</p>
+    </div>
+    <div th:unless="${user.boards.isEmpty}" class="boards-container">
+        <div th:each="board : ${user.boards}" class="board-card" th:onclick="|window.location.href='/api/v1/board/' + ${board.id}|">
+            <div class="board-title" th:text="${board.title}">Название доски</div>
+            <div class="board-description" th:text="${board.description}">Описание доски</div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для удаления доски -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeDeleteModal()">&times;</span>
+        <h2>Выберите доску для удаления</h2>
+        <div class="modal-board-list">
+            <div th:each="board : ${user.boards}" class="modal-board-item" th:onclick="|selectBoardForDeletion(${board.id})|">
+                <div class="modal-board-title" th:text="${board.title}">Название доски</div>
+                <div class="modal-board-description" th:text="${board.description}">Описание доски</div>
+            </div>
+        </div>
+        <button onclick="confirmDeletion()" class="confirm-delete-button">
+            <i class="fas fa-trash"></i> Удалить выбранную доску
+        </button>
+    </div>
+</div>
+
+<script>
+    let selectedBoardId = null;
+
+    // Открыть модальное окно
+    function openDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    // Закрыть модальное окно
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    // Выбор доски для удаления
+    function selectBoardForDeletion(boardId) {
+        selectedBoardId = boardId;
+        const items = document.querySelectorAll('.modal-board-item');
+        items.forEach(item => item.style.backgroundColor = '#ffffff');
+        event.currentTarget.style.backgroundColor = '#ebecf0';
+    }
+
+    // Подтверждение удаления
+    function confirmDeletion() {
+        if (selectedBoardId) {
+            if (confirm('Вы уверены, что хотите удалить эту доску?')) {
+                // Отправляем DELETE-запрос
+                fetch(`/api/v1/board/delete/${selectedBoardId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Если удаление успешно, перезагружаем страницу
+                            window.location.reload();
+                        } else {
+                            alert('Ошибка при удалении доски.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        alert('Ошибка при удалении доски.');
+                    });
+            }
+        } else {
+            alert('Пожалуйста, выберите доску для удаления.');
+        }
+    }
+
+</script>
+</body>
+</html>
