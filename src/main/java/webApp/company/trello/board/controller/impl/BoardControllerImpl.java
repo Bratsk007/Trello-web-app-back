@@ -92,6 +92,34 @@ public class BoardControllerImpl implements BoardController {
         return "redirect:/home-page";
     }
 
+    @Override
+    public String getEditBoardPage(Integer boardId, Model model) {
+        Board board = boardService.getBoardById(boardId);
+
+        model.addAttribute("board", board);
+        return "edit-board";
+    }
+
+    @Override
+    public String editBoard(HttpSession session, Integer boardId, String title, String description) {
+
+        User user = (User) session.getAttribute("user");
+
+        if (Objects.isNull(user)) {
+            return "redirect:/";
+        }
+
+        Board board = boardService.getBoardById(boardId);
+        user.getBoards().remove(board);
+        board.setTitle(title);
+        board.setDescription(description);
+        user.getBoards().add(board);
+        boardService.saveBoard(board);
+
+        return "redirect:/api/v1/board/" + board.getId();
+    }
+
+
 //    @Override
 //    public void deleteBoardById(Integer boardId) {
 //        boardService.deleteBoardById(boardId);

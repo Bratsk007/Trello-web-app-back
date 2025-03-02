@@ -2,6 +2,7 @@ package webApp.company.trello.card.controller;
 
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import webApp.company.trello.card.dto.CardMoveRequest;
@@ -14,6 +15,15 @@ public interface CardController {
 
     @GetMapping("/{cardId}")
     String getCardById(Model model, @PathVariable Integer cardId);
+
+    @PostMapping("/{cardId}/delete-card")
+    ResponseEntity<Void> deleteCardById(@PathVariable Integer cardId);
+
+    @GetMapping("/{cardId}/get-edit-page")
+    String getEditPage(@PathVariable Integer cardId, Model model);
+
+    @PostMapping("/{cardId}/edit")
+    String editCard(@PathVariable Integer cardId, @RequestParam String title, @RequestParam String description);
 
 //    @PostMapping("/{listId}")
 //    void createCard(@PathVariable Integer listId, CardRequest cardRequest);

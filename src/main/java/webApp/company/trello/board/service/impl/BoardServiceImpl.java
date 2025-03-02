@@ -43,21 +43,26 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void saveBoard(Integer userId, BoardRequest boardRequest) {
-        Optional<User> user = userDao.findById(userId);
-
-        Board board = Board.builder()
-                .description(boardRequest.getDescription())
-                .title(boardRequest.getTitle())
-                .build();
-
-        if (user.isPresent()) {
-            board.setUser(user.get());
-            boardDao.save(board);
-        }
-
-
+    public void saveBoard(Board board) {
+        boardDao.save(board);
     }
+
+//    @Override
+//    public void saveBoard(Integer userId, BoardRequest boardRequest) {
+//        Optional<User> user = userDao.findById(userId);
+//
+//        Board board = Board.builder()
+//                .description(boardRequest.getDescription())
+//                .title(boardRequest.getTitle())
+//                .build();
+//
+//        if (user.isPresent()) {
+//            board.setUser(user.get());
+//            boardDao.save(board);
+//        }
+//
+//
+//    }
 
     @Override
     public void updateBoard(Integer boardId, BoardRequest boardRequest) {

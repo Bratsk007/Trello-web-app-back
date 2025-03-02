@@ -1,6 +1,7 @@
 package webApp.company.trello.list.controller.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import webApp.company.trello.board.model.Board;
@@ -78,6 +79,36 @@ public class CatalogControllerImpl implements CatalogController {
         catalogService.saveCatalog(catalog);
 
         return "redirect:/api/v1/board/" + boardId;
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteCatalog(Integer catalogId) {
+        catalogService.deleteListById(catalogId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public String getEditPage(Integer catalogId, Model model) {
+        Catalog catalog = catalogService.findById(catalogId).get();
+
+        model.addAttribute("catalog", catalog);
+        return "edit-catalog";
+    }
+
+    @Override
+    public String editCatalog(Integer catalogId, String title) {
+
+        Catalog catalog = catalogService.findById(catalogId).get();
+
+        Board board = catalog.getBoard();
+        board.getCatalogList().remove(catalog);
+        catalog.setTitle(title);
+        board.getCatalogList().add(catalog);
+
+        catalogService.saveCatalog(catalog);
+
+        return "redirect:/api/v1/board/" + board.getId();
     }
 
 //    @Override

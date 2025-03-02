@@ -15,6 +15,8 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            position: relative; /* Для корректного позиционирования кнопки "Выйти" */
+            padding-top: 80px; /* Отступ сверху для кнопки "Выйти" */
         }
 
         .card-header {
@@ -53,20 +55,135 @@
         .back-link i {
             margin-right: 8px;
         }
+
+        .logout-button {
+            position: absolute; /* Абсолютное позиционирование */
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            z-index: 1000; /* Убедимся, что кнопка всегда сверху */
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+        }
+
+        .logout-button:hover {
+            background-color: #e60000;
+        }
+
+        .delete-card-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-top: 20px; /* Отступ сверху */
+        }
+
+        .delete-card-button:hover {
+            background-color: #e60000;
+        }
+
+        .delete-card-button i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .logout-button {
+                padding: 8px 16px;
+                font-size: 12px;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logout-button {
+                padding: 6px 12px;
+                font-size: 10px;
+                top: 5px;
+                right: 5px;
+            }
+        }
+
+        .edit-card-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .edit-card-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
 <div class="container">
-<!--    &lt;!&ndash; Ссылка "Назад" &ndash;&gt;-->
-<!--    <a th:href="@{/board/{boardId}(boardId=${card.catalog.board.id})}" class="back-link">-->
-<!--        <i class="fas fa-arrow-left"></i> Назад к доске-->
-<!--    </a>-->
+    <!-- Ссылка "Назад" -->
+    <a th:href="@{/api/v1/board/{boardId}(boardId=${card.catalog.board.id})}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Назад к доске
+    </a>
 
-    <!-- Заголовок и описание карточки -->
+    <!-- Форма для выхода -->
+    <form th:action="@{/api/v1/auth/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-button">
+            <i class="fas fa-sign-out-alt"></i> Выйти
+        </button>
+    </form>
+
     <div class="card-header">
         <div class="card-title" th:text=" 'Название карточки: ' + ${card.title}">Название карточки</div>
         <div class="card-description" th:text=" 'Описание карточки: ' + ${card.description}">Описание карточки</div>
+        <!-- Кнопка "Редактировать" -->
+        <a th:href="@{/api/v1/card/{cardId}/get-edit-page(cardId=${card.id})}" class="edit-card-button">
+            <i class="fas fa-edit"></i> Редактировать
+        </a>
+        <!-- Кнопка "Удалить карточку" -->
+        <button class="delete-card-button" onclick="deleteCard()">
+            <i class="fas fa-trash"></i> Удалить карточку
+        </button>
     </div>
 </div>
+
+<script>
+    function deleteCard() {
+        if (confirm('Вы уверены, что хотите удалить эту карточку?')) {
+            const cardId = [[${card.id}]]; // Получаем ID карточки из Thymeleaf
+
+            fetch(`/api/v1/card/${cardId}/delete-card`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `/api/v1/board/${[[${card.catalog.board.id}]]}`; // Перенаправляем на страницу доски
+                    } else {
+                        alert('Ошибка при удалении карточки');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                });
+        }
+    }
+</script>
 </body>
 </html>

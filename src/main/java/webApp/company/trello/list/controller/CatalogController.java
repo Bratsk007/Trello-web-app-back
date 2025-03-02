@@ -2,6 +2,7 @@ package webApp.company.trello.list.controller;
 
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import webApp.company.trello.list.dto.CatalogRequest;
@@ -30,7 +31,15 @@ public interface CatalogController {
     @GetMapping("/{boardId}/add-catalog-page")
     String getAddCatalogPage(@PathVariable Integer boardId, Model model);
 
-
     @PostMapping("/{boardId}/create-catalog")
     String createCatalog(@PathVariable Integer boardId, @RequestParam String title);
+
+    @PostMapping("/{catalogId}/delete-catalog")
+    ResponseEntity<Void> deleteCatalog(@PathVariable Integer catalogId);
+
+    @GetMapping("/{catalogId}/get-edit-page")
+    String getEditPage(@PathVariable Integer catalogId, Model model);
+
+    @PostMapping("/{catalogId}/edit")
+    String editCatalog(@PathVariable Integer catalogId, @RequestParam String title);
 }

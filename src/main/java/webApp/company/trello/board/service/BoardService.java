@@ -12,7 +12,7 @@ public interface BoardService {
     List<BoardListResponse> getBoardsByUserId(Integer userId);
 
 
-    void saveBoard(Integer userId, BoardRequest boardRequest);
+    void saveBoard(Board board);
 
     void updateBoard(Integer boardId, BoardRequest boardRequest);
 

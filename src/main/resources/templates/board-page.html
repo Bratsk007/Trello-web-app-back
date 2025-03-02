@@ -230,6 +230,145 @@
         .cards-list::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
+
+        /* Стили для кнопки удаления списка */
+        .delete-catalog-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .delete-catalog-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .delete-catalog-button:hover {
+            background-color: #e60000;
+        }
+
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #5e6c84;
+        }
+
+        .close-modal:hover {
+            color: #172b4d;
+        }
+
+        .modal-content h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #172b4d;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #5e6c84;
+            margin-bottom: 20px;
+        }
+
+        #catalogSelect {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .delete-button, .cancel-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .delete-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+        }
+
+        .delete-button:hover {
+            background-color: #e60000;
+        }
+
+        .cancel-button {
+            background-color: #ebecf0;
+            color: #172b4d;
+            border: none;
+            margin-left: 10px;
+        }
+
+        .cancel-button:hover {
+            background-color: #ddd;
+        }
+        .edit-board-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .edit-board-button:hover {
+            background-color: #0056b3;
+        }
+
+        .edit-catalog-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+            margin-bottom: 10px; /* Добавляем отступ снизу */
+            text-decoration: none;
+        }
+
+        .edit-catalog-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -246,7 +385,6 @@
         </button>
     </form>
 
-    <!-- Заголовок и описание доски -->
     <div class="board-header">
         <div class="board-title">
             Название доски: <span th:text="${board.title}">Название доски</span>
@@ -254,7 +392,11 @@
         <div class="board-description">
             Описание доски: <span th:text="${board.description}">Описание доски</span>
         </div>
+        <a th:href="@{/api/v1/board/{boardId}/get-edit-page(boardId=${board.id})}" class="edit-board-button">
+            <i class="fas fa-edit"></i> Редактировать доску
+        </a>
     </div>
+
 
     <!-- Проверка, есть ли каталоги -->
     <div th:if="${board.catalogList.isEmpty}">
@@ -272,6 +414,11 @@
     <div th:unless="${board.catalogList.isEmpty}" class="catalogs-container">
         <div th:each="catalog : ${board.catalogList}" class="catalog">
             <div class="catalog-title" th:text="${catalog.title}">Название каталога</div>
+            <!-- Кнопка "Редактировать" -->
+            <a th:href="@{/api/v1/catalog/{catalogId}/get-edit-page(catalogId=${catalog.id})}" class="edit-catalog-button">
+                <i class="fas fa-edit"></i> Редактировать
+            </a>
+            <!-- Блок с карточками -->
             <div class="cards-list">
                 <div th:each="card : ${catalog.cardList}" class="card"
                      th:onclick="|window.location.href='/api/v1/card/' + ${card.id}|">
@@ -293,6 +440,74 @@
             </div>
         </div>
     </div>
+
+    <!-- Кнопка для удаления списка -->
+    <div class="delete-catalog-section">
+        <button class="delete-catalog-button" onclick="openDeleteModal()">
+            <i class="fas fa-trash"></i> Удалить список
+        </button>
+    </div>
+
+
+
+    <!-- Модальное окно для удаления списка -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeDeleteModal()">&times;</span>
+            <h2>Удаление списка</h2>
+            <p>Выберите список для удаления:</p>
+            <form id="deleteCatalogForm" method="post">
+                <select id="catalogSelect" name="catalogId">
+                    <option value="" disabled selected>Выберите список</option>
+                    <option th:each="catalog : ${board.catalogList}" th:value="${catalog.id}" th:text="${catalog.title}"></option>
+                </select>
+                <button type="submit" class="delete-button">Удалить</button>
+                <button type="button" class="cancel-button" onclick="closeDeleteModal()">Отмена</button>
+            </form>
+        </div>
+    </div>
+
+
 </div>
+
+<script>
+    // Открытие модального окна
+    function openDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    // Закрытие модального окна
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    // Обработка отправки формы удаления
+    document.getElementById('deleteCatalogForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const catalogId = document.getElementById('catalogSelect').value;
+
+        if (!catalogId) {
+            alert('Пожалуйста, выберите список для удаления');
+            return;
+        }
+
+        fetch(`/api/v1/catalog/${catalogId}/delete-catalog`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload(); // Перезагрузить страницу после удаления
+                } else {
+                    alert('Ошибка при удалении списка');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+    });
+</script>
 </body>
 </html>

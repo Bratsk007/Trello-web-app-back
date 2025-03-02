@@ -35,10 +35,17 @@ public interface BoardController {
     @PostMapping("/delete/{boardId}")
     String deleteBoard(HttpSession session, @PathVariable Integer boardId);
 
+    @GetMapping("/{boardId}/get-edit-page")
+    String getEditBoardPage(@PathVariable Integer boardId, Model model);
+
+    @PostMapping("/{boardId}/edit")
+    String editBoard(HttpSession session, @PathVariable Integer boardId, @RequestParam String title, @RequestParam String description);
+
     @GetMapping("/page-creating-board")
     default String getPageOfCreatingBoard() {
         return "create-board";
     }
+
 
 
 //    @DeleteMapping("/{boardId}")
