@@ -11,31 +11,16 @@ import webApp.company.trello.board.service.BoardService;
 import webApp.company.trello.user.dao.UserDao;
 import webApp.company.trello.user.model.User;
 
-import java.util.List;
 import java.util.Objects;
 
 
 @RequiredArgsConstructor
 @Controller
 public class BoardControllerImpl implements BoardController {
+
     private final BoardService boardService;
     private final UserDao userDao;
 
-
-//    @Override
-//    public List<BoardListResponse> getBoardsByUserId(Integer userId) {
-//        return boardService.getBoardsByUserId(userId);
-//    }
-//
-//    @Override
-//    public void saveBoardByUserId(Integer userId, BoardRequest boardRequest) {
-//        boardService.saveBoard(userId, boardRequest);
-//    }
-//
-//    @Override
-//    public void updateBoard(Integer boardId, BoardRequest boardRequest) {
-//        boardService.updateBoard(boardId, boardRequest);
-//    }
 
     @Override
     public String getBoardById(Model model, Integer boardId) {
@@ -118,12 +103,6 @@ public class BoardControllerImpl implements BoardController {
 
         return "redirect:/api/v1/board/" + board.getId();
     }
-
-
-//    @Override
-//    public void deleteBoardById(Integer boardId) {
-//        boardService.deleteBoardById(boardId);
-//    }
 
 
 }

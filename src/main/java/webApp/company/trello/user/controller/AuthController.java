@@ -38,6 +38,13 @@ public interface AuthController {
     @PostMapping("/login")
     String authenticated(@RequestParam String email, @RequestParam String password, HttpSession session);
 
+    /**
+     * Завершает сеанс текущего пользователя (логаут).
+     *
+     * @param session Сессия HTTP, которая будет очищена для завершения сеанса пользователя.
+     * @return Строка, представляющая результат операции (например, перенаправление на страницу входа или главную страницу).
+     * @see HttpSession
+     */
     @Operation(summary = "Logout пользователя")
     @PostMapping("/logout")
     String logout(HttpSession session);
